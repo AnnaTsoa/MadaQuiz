@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fantatrao ve Madagasikara?</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="light">
+  <div id="phone-screen-container">
+    <div class="main-wrapper">
+      
+      <div id="intro-screen" class="screen">
+        <div class="logo-container">
+          <img src="openDev.jpeg" alt="Logo Madagascar" class="logo-circle">
+        </div>
+        <h1 id="intro-title">Fantatrao ve Madagasikara?</h1>
+        <div class="settings-group">
+          <label for="language-select-intro">Langue:</label>
+          <select id="language-select-intro">
+            <option value="mg">Malagasy</option>
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+          </select>
+          <button id="toggle-theme-intro" class="icon-button">🌗</button>
+        </div>
+        <button id="start-button" class="main-button">Manomboka</button>
+      </div>
+
+      <div id="category-select-screen" class="screen hidden">
+        <h2>Choisissez une catégorie :</h2>
+        <div class="provinces-grid">
+          <button class="category-button" data-category="antananarivo">Antananarivo</button>
+          <button class="category-button" data-category="antsiranana">Antsiranana</button>
+          <button class="category-button" data-category="fianarantsoa">Fianarantsoa</button>
+          <button class="category-button" data-category="mahajanga">Mahajanga</button>
+          <button class="category-button" data-category="toamasina">Toamasina</button>
+          <button class="category-button" data-category="toliara">Toliara</button>
+        </div>
+        <h3>Ou choisissez des thèmes :</h3>
+        <div class="mystery-buttons">
+          <button class="category-button" data-category="mystery-history">Mystères - Histoire</button>
+          <button class="category-button" data-category="mystery-geography">Mystères - Géographie</button>
+        </div>
+      </div>
+
+      <div id="quiz-screen" class="screen hidden">
+        <div class="quiz-header">
+          <span id="current-score">Score: 0</span>
+          <div id="timer-bar-container">
+            <div id="timer-bar"></div>
+          </div>
+        </div>
+        <h3 id="question-text"></h3>
+        <div id="answers"></div>
+      </div>
+
+      <div id="result-screen" class="screen hidden">
+        <h2>Résultat du Quiz</h2>
+        <p id="final-score-text"></p>
+        <button id="restart-button" class="main-button">Recommencer</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
