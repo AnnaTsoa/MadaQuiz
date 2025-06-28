@@ -7,7 +7,7 @@
   --font-primary: 'Arial', sans-serif;
   --font-secondary: 'Verdana', sans-serif;
 
-  /* --- Couleurs Générales (mode clair - nuances plus claires/mattes) --- */
+  /* --- Couleurs Générales */
   --color-primary: #DD3330; /* Rouge clair/mat */
   --color-secondary: #008844; /* Vert clair/mat */
   --color-white: #F8F8F8; /* Blanc très clair/mat */
@@ -31,7 +31,12 @@
   /* --- Couleurs spécifiques Quiz --- */
   --correct-color: var(--color-secondary); /* Vert clair/mat en clair, vert foncé en sombre */
   --incorrect-color: var(--color-primary); /* Rouge clair/mat en clair, rouge foncé en sombre */
-  --timer-color: var(--color-white); /* NOUVEAU : Blanc pour le timer en mode clair */
+  --timer-color: var(--color-white); /* CORRECTION ICI: Utilise var() pour référencer la variable */
+
+  /* NOUVEAU: Variables pour l'espacement adaptable */
+  --spacing-sm: 10px;
+  --spacing-md: 20px;
+  --spacing-lg: 30px;
 }
 
 /* Global box-sizing for consistent layout */
@@ -42,7 +47,8 @@
 body {
   font-family: var(--font-primary);
   margin: 0;
-  padding: 0;
+  /* MODIFIÉ: Ajout d'un padding pour maintenir l'espace autour du contenu même sur les très petits écrans */
+  padding: var(--spacing-md); /* Un padding par défaut autour du body */
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -66,7 +72,8 @@ body.dark {
   justify-content: center;
   align-items: center;
   flex-grow: 1;
-  padding: 20px; /* Padding around the phone container */
+  /* MODIFIÉ: Utilise les variables d'espacement pour le padding */
+  padding: var(--spacing-md); /* Padding autour du conteneur du téléphone */
   width: 100%;
   height: 100%;
 }
@@ -83,14 +90,18 @@ body.dark {
   position: relative; /* Crucial for absolute positioning of .screen children */
   overflow: hidden; /* Important pour cacher tout débordement interne */
 
-  /* Mise à jour du dégradé pour le mode clair */
+  /* Mise à jour du dégradé pour le mode clair (couleurs réelles du drapeau) */
   background: linear-gradient(to right, var(--color-white) 33.3%, var(--color-primary) 33.3%, var(--color-primary) 66.6%, var(--color-secondary) 66.6%);
 
-  /* SUPPRIMÉ : les propriétés mask-image */
+  /* NOUVEAU : Ajout de la bordure ici - ceci est la bordure "externe" de l'appareil */
+  border: 5px solid rgba(0, 0, 0, 0.3); /* Bordure par défaut pour le main-wrapper */
+
+
+  /* SUPPRIMÉ : les propriétés mask-image (car la bordure de la carte est maintenant un SVG sur le body) */
   -webkit-mask-image: none;
   mask-image: none;
 
-  transition: background-color 0.3s ease, box-shadow 0.3s ease, border-radius 0.3s ease, background 0.3s ease; /* Ajout de la transition pour background */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, border-radius 0.3s ease, background 0.3s ease, border-color 0.3s ease; /* Ajout de la transition pour background et border-color */
 
   /* Assure que le wrapper est un flex container pour centrer son contenu si nécessaire */
   display: flex;
@@ -101,9 +112,10 @@ body.dark {
 
 /* Dark mode pour le main-wrapper */
 body.dark .main-wrapper {
-  /* NOUVEAU : Couleurs sombres pour le dégradé du drapeau en mode sombre */
-  background: linear-gradient(to right, #404040 33.3%, #882220 33.3%, #882220 66.6%, #004411 66.6%); /* Blanc foncé, Rouge sombre, Vert sombre */
+  /* MODIFIÉ : Supprimé le dégradé sombre, le drapeau reste avec ses couleurs d'origine */
+  background: linear-gradient(to right, var(--color-white) 33.3%, var(--color-primary) 33.3%, var(--color-primary) 66.6%, var(--color-secondary) 66.6%); /* Les couleurs du drapeau restent les mêmes */
   box-shadow: 0 0 25px rgba(255, 255, 255, 0.2); /* Ombre plus claire en mode sombre */
+  border-color: rgba(255, 255, 255, 0.3); /* Bordure plus claire en mode sombre */
 }
 
 
@@ -122,17 +134,22 @@ body.dark .main-wrapper {
   transition: opacity 0.3s ease, transform 0.3s ease;
   background: transparent; /* Conserver le fond transparent pour voir le drapeau en dessous */
 
-  /* Padding interne pour chaque écran */
-  /* Ajustez ces valeurs si nécessaire. */
-  padding: 50px 30px; /* Top/Bottom: 50px, Left/Right: 30px */
+  /* MODIFIÉ: Padding interne du screen avec des unités adaptatives */
+  padding: clamp(20px, 5vw, 50px) clamp(15px, 4vw, 30px); /* Top/Bottom: min 20px, max 50px; Left/Right: min 15px, max 30px */
 
   overflow-y: auto; /* Permet le défilement vertical si le contenu est trop long pour la zone visible */
   -webkit-overflow-scrolling: touch; /* Améliore le défilement sur iOS */
   box-sizing: border-box; /* S'assure que le padding est inclus dans width/height */
+
+  /* NOUVEAU : Bordure interne pour le contenu de l'écran */
+  border: 2px solid var(--border-color-light);
+  border-radius: 10px; /* Bords légèrement arrondis pour la bordure interne */
 }
 
 body.dark .screen {
   color: var(--text-color-dark);
+  /* NOUVEAU : Couleur de la bordure interne en mode sombre */
+  border-color: var(--border-color-dark);
 }
 
 .screen.hidden {
@@ -152,28 +169,32 @@ body.dark .screen {
 
 /* --- Intro Screen Specifics --- */
 #intro-screen .logo-container {
-  width: 150px;
-  height: 150px;
+  /* MODIFIÉ: Utilise clamp() pour la taille du logo container */
+  width: clamp(100px, 25vw, 150px);
+  height: clamp(100px, 25vw, 150px);
   border-radius: 50%;
   background-color: var(--color-white);
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  margin-bottom: 20px;
+  /* MODIFIÉ: Marge adaptable */
+  margin-bottom: clamp(15px, 4vw, 20px);
   box-shadow: 0 0 15px rgba(0,0,0,0.3);
 }
 
 #intro-screen .logo-circle {
-  width: 150px;
-  height: 150px;
+  /* MODIFIÉ: Utilise des unités relatives pour l'image à l'intérieur */
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 
 #intro-screen h1 {
   /* Ajustement de la taille minimale de la police pour mieux tenir */
   font-size: clamp(1.4em, 4vw, 2.2em); /* Commencer plus petit */
-  margin-bottom: 30px; /* Conserver la marge pour espacer */
+  /* MODIFIÉ: Marge adaptable */
+  margin-bottom: clamp(20px, 5vw, 30px);
   color: inherit;
   word-break: break-word;
 }
@@ -182,9 +203,10 @@ body.dark .screen {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 15px;
-  margin-bottom: 40px; /* Marge pour espacer le bouton du bas */
-  font-size: 1.1em;
+  gap: var(--spacing-sm); /* Utilise la variable d'espacement */
+  /* MODIFIÉ: Marge adaptable */
+  margin-bottom: clamp(30px, 8vw, 40px);
+  font-size: clamp(0.9em, 2.5vw, 1.1em); /* Police adaptable */
 }
 
 .settings-group label, .settings-group select {
@@ -192,8 +214,9 @@ body.dark .screen {
 }
 
 .settings-group select {
-  padding: 8px 12px;
-  border-radius: 5px;
+  /* MODIFIÉ: Padding et border-radius adaptatifs */
+  padding: clamp(6px, 1.5vw, 8px) clamp(10px, 2.5vw, 12px);
+  border-radius: clamp(3px, 0.8vw, 5px);
   border: 1px solid var(--border-color-light);
   background-color: var(--screen-bg-light);
   color: var(--text-color-light);
@@ -208,24 +231,24 @@ body.dark .screen {
 
 body.dark .settings-group select {
   border-color: var(--border-color-dark);
-  background-color: var(--screen-bg-dark);
   color: var(--text-color-dark);
   background-image: url('data:image/svg+xml;utf8,<svg fill="white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
 }
 
 .icon-button {
-    background: none;
-    border: none;
-    font-size: 2em;
-    cursor: pointer;
-    padding: 0;
-    line-height: 1;
-    color: inherit;
+  background: none;
+  border: none;
+  font-size: clamp(1.5em, 5vw, 2em); /* Taille d'icône adaptable */
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  color: inherit;
 }
 
 .main-button {
-  padding: 12px 30px;
-  font-size: 1.3em;
+  /* MODIFIÉ: Padding et font-size adaptatifs */
+  padding: clamp(10px, 2.5vw, 12px) clamp(20px, 5vw, 30px);
+  font-size: clamp(1.1em, 3vw, 1.3em);
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -254,7 +277,8 @@ body.dark .main-button {
 #category-select-screen h2, #category-select-screen h3 {
     /* Ajustement de la taille minimale de la police pour mieux tenir */
     font-size: clamp(1.2em, 3.5vw, 1.8em);
-    margin-bottom: 20px;
+    /* MODIFIÉ: Marge adaptable */
+    margin-bottom: clamp(15px, 4vw, 20px);
     color: inherit;
     word-break: break-word;
 }
@@ -262,14 +286,17 @@ body.dark .main-button {
 .provinces-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  margin-bottom: 30px;
+  /* MODIFIÉ: Gap adaptable */
+  gap: var(--spacing-sm);
+  /* MODIFIÉ: Marge adaptable */
+  margin-bottom: clamp(20px, 5vw, 30px);
   width: 90%; /* This is relative to the *screen's* width, which already has padding */
   max-width: 400px;
 }
 
 .category-button {
-  padding: 10px 15px;
+  /* MODIFIÉ: Padding et font-size adaptatifs */
+  padding: clamp(8px, 2vw, 10px) clamp(10px, 2.5vw, 15px);
   font-size: clamp(0.9em, 2.5vw, 1.1em);
   border: 1px solid var(--border-color-light);
   border-radius: 8px;
@@ -279,7 +306,8 @@ body.dark .main-button {
   transition: background-color 0.2s ease, transform 0.1s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   word-break: break-word;
-  min-height: 45px;
+  /* MODIFIÉ: min-height adaptable */
+  min-height: clamp(40px, 10vw, 45px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -304,7 +332,8 @@ body.dark .category-button:hover {
 .mystery-buttons {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    /* MODIFIÉ: Gap adaptable */
+    gap: var(--spacing-sm);
     width: 90%;
     max-width: 400px;
 }
@@ -319,12 +348,13 @@ body.dark .category-button:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  /* MODIFIÉ: Marge adaptable */
+  margin-bottom: clamp(15px, 4vw, 20px);
   padding: 0; /* Pas de padding ici, le padding global du .screen est suffisant */
 }
 
 #current-score {
-  font-size: 1.2em;
+  font-size: clamp(1em, 2.5vw, 1.2em); /* Police adaptable */
   font-weight: bold;
   color: inherit;
 }
@@ -353,8 +383,10 @@ body.dark #timer-bar {
 
 #question-text {
   font-size: clamp(1em, 3.5vw, 1.4em);
-  margin-bottom: 20px;
-  min-height: 80px;
+  /* MODIFIÉ: Marge adaptable */
+  margin-bottom: clamp(15px, 4vw, 20px);
+  /* MODIFIÉ: min-height adaptable */
+  min-height: clamp(60px, 15vw, 80px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -368,12 +400,14 @@ body.dark #timer-bar {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  /* MODIFIÉ: Gap adaptable */
+  gap: var(--spacing-sm);
   margin-top: auto; /* Pushes answers to the bottom if question is short */
 }
 
 #answers button {
-  padding: 10px 15px;
+  /* MODIFIÉ: Padding et font-size adaptatifs */
+  padding: clamp(8px, 2vw, 10px) clamp(10px, 2.5vw, 15px);
   font-size: clamp(0.9em, 2.5vw, 1.1em);
   border: 1px solid var(--border-color-light);
   border-radius: 8px;
@@ -383,7 +417,8 @@ body.dark #timer-bar {
   transition: background-color 0.2s ease, transform 0.1s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   word-break: break-word;
-  min-height: 50px;
+  /* MODIFIÉ: min-height adaptable */
+  min-height: clamp(45px, 12vw, 50px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -424,7 +459,8 @@ body.dark #answers button:hover:not(:disabled) {
 
 /* --- Result Screen Specifics --- */
 #result-screen h2 {
-    margin-bottom: 20px;
+    /* MODIFIÉ: Marge adaptable */
+    margin-bottom: clamp(15px, 4vw, 20px);
     color: inherit;
     word-break: break-word;
 }
@@ -432,40 +468,50 @@ body.dark #answers button:hover:not(:disabled) {
 #final-score-text {
     font-size: clamp(1.5em, 4vw, 1.8em);
     font-weight: bold;
-    margin-bottom: 40px;
+    margin-bottom: clamp(30px, 8vw, 40px), 8vw;
     color: inherit;
     word-break: break-word;
     text-align: center;
 }
 
-/* --- Responsiveness (Média Queries) --- */
+/* --- Responsive --- */
 @media (max-width: 900px) {
     #phone-screen-container {
         padding: 0;
     }
 
     .main-wrapper {
-        border-radius: 0;
+      border-radius: 25;
         box-shadow: none;
         max-height: 100vh;
-        height: 100vh;
         min-height: 100vh;
+        border: 5px solid rgba(0, 0, 0, 0.3); 
+        margin-bottom: 10%;
     }
 
+    body.dark .main-wrapper {
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+
     .screen {
-        /* Ajustement du padding pour les écrans plus petits */
-        padding: 40px 25px; /* Réduction du padding sur les côtés sur mobile */
+        padding: clamp(15px, 4vw, 15px, 4vw); 
+        border-radius: 25;
+        border: 2px solid var(--border-color-light); 
+    }
+
+    body.dark .screen {
+        border-color: var(--border-color-dark);
     }
 
     #intro-screen h1 {
-        font-size: 1.3em; /* Encore un peu plus petit sur les petits écrans */
-        margin-bottom: 25px; /* Ajuster la marge si nécessaire */
+        font-size: clamp(1.2em, 3vw, 1.3em);
     }
 
     .settings-group {
         flex-direction: column;
-        gap: 10px;
-        margin-bottom: 30px; /* Ajuster la marge si nécessaire */
+        gap: var(--spacing-sm);
+        margin-bottom: clamp(20px, 5vw, 30px);
     }
 
     .provinces-grid {
@@ -474,61 +520,37 @@ body.dark #answers button:hover:not(:disabled) {
     }
 
     .category-button {
-        font-size: 0.95em;
-        padding: 8px;
-        min-height: auto;
+        font-size: clamp(0.9em, 2vw, 0.95em);
+        padding: clamp(6px, 1.5vw, 8px);
     }
 
     #question-text {
-        font-size: 1.05em;
-        min-height: auto;
+        font-size: clamp(1em, 2.5vw, 1.05em);
     }
 
     #answers button {
-        font-size: 0.95em;
-        padding: 8px;
-        min-height: auto;
+        font-size: clamp(0.9em, 2vw, 0.95em);
+        padding: clamp(6px, 1.5vw, 8px);
     }
     #final-score-text {
-        font-size: 1.3em;
+        font-size: clamp(1.2em, 3vw, 1.3em);
     }
 }
 
 @media (max-width: 400px) {
     #intro-screen .logo-container {
-        width: 100px;
-        height: 100px;
-    }
-    #intro-screen h1 {
-        font-size: 1.2em; /* Encore plus petit sur très petits écrans */
-        margin-bottom: 20px;
+        width: clamp(80px, 20vw, 100px);
+        height: clamp(80px, 20vw, 100px);
     }
     .main-button {
-        font-size: 1em;
-        padding: 8px 15px;
-    }
-    .category-button {
-        font-size: 0.85em;
-        padding: 6px;
-    }
-    #question-text {
-        font-size: 0.9em;
-    }
-    #answers button {
-        font-size: 0.85em;
-        padding: 6px;
-    }
-    #final-score-text {
-        font-size: 1.1em;
+        font-size: clamp(0.9em, 2.5vw, 1em);
+        padding: clamp(6px, 1.5vw, 8px) clamp(10px, 2.5vw, 15px);
     }
     .quiz-header {
       flex-direction: column;
-      gap: 10px;
+      gap: var(--spacing-sm);
     }
     #timer-bar-container {
       width: 90%;
-    }
-    .screen {
-      padding: 30px 15px; /* Ajustement du padding sur très petits écrans */
     }
 }
